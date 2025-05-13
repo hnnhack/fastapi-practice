@@ -22,3 +22,20 @@ def get_all_users(db: Session):
 def get_user(db: Session, user_id: int):
   user = db.query(DbUser).filter(DbUser.id == user_id).first()
   return user
+
+def update_user(db: Session, user_id: int, request: UserBase):
+  user = db.query(DbUser).filter(DbUser.id == user_id)
+  user.update({
+    DbUser.username: request.username,
+    DbUser.email: request.email,
+    DbUser.password: Hash.bcrypt(request.password)
+  })
+  db.commit()
+  return user.first()
+  
+
+def delete_user(db: Session, user_id: int):
+  user = db.query(DbUser).filter(DbUser.id == user_id).first()
+  db.delete(user)
+  db.commit()
+  return "User deleted" 
