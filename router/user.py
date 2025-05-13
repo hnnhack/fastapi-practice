@@ -15,6 +15,19 @@ router = APIRouter(
 def create_user(request: UserBase, db: Session = Depends(get_db)):
     return db_user.create_user(db, request)
 
+# get all users
+@router.get("/", response_model=list[UserDisplay])
+def get_all_users(db: Session = Depends(get_db)):
+    return db_user.get_all_users(db)
+
+# Get User by ID
+@router.get("/{user_id}", response_model=UserDisplay)
+def get_user(user_id: int, db: Session = Depends(get_db)):
+    user = db_user.get_user(db, user_id)
+    if not user:
+        return Response(status_code=status.HTTP_404_NOT_FOUND)
+    return user
+
 # Get User
 # @router.get("/")
 # def index():
